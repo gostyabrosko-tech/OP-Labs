@@ -1,0 +1,10 @@
+{
+  "name": "lab3-demo",
+  "version": "1.0.0",
+  "type": "module",
+  "author": "Arthur Kuzmenko",
+  "license": "MIT",
+  "dependencies": {
+    "@arthur/lab3-core": "file:../lab3-core"
+  }
+}
