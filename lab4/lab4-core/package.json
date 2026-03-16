@@ -1,0 +1,8 @@
+{
+  "name": "@arthur/lab4-core",
+  "version": "1.0.0",
+  "type": "module",
+  "author": "Arthur Kuzmenko",
+  "license": "MIT",
+  "main": "src/index.js"
+}
