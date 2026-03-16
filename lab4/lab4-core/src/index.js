@@ -1,34 +1,34 @@
 export class PriorityQueue {
     constructor() {
         this.items = [];
-        this.counter = 0;
+        this.idCounter = 0;
     }
     enqueue(item, priority) {
-        const element = { item, priority, id: this.counter++ };
-        let added = false;
-        for (let i = 0; i < this.items.length; i++) {
-            if (priority < this.items[i].priority) {
-                this.items.splice(i, 0, element);
-                added = true;
-                break;
-            }
+        const element = { item, priority, id: this.idCounter++ };
+        let low = 0;
+        let high = this.items.length;
+        while (low < high) {
+            let mid = (low + high) >>> 1;
+            if (this.items[mid].priority < priority) low = mid + 1;
+            else high = mid;
         }
-        if (!added) this.items.push(element);
+        this.items.splice(low, 0, element);
     }
     peek(mode = 'highest') {
         if (this.items.length === 0) return null;
-        switch(mode) {
-            case 'highest': return this.items[this.items.length - 1];
-            case 'lowest':  return this.items[0];
-            case 'oldest':  return this.items.reduce((prev, curr) => prev.id < curr.id ? prev : curr);
-            case 'newest':  return this.items.reduce((prev, curr) => prev.id > curr.id ? prev : curr);
-            default: return null;
+        if (mode === 'highest') return this.items[this.items.length - 1];
+        if (mode === 'lowest') return this.items[0];
+        let target = this.items[0];
+        for (const el of this.items) {
+            if (mode === 'oldest' && el.id < target.id) target = el;
+            if (mode === 'newest' && el.id > target.id) target = el;
         }
+        return target;
     }
     dequeue(mode = 'highest') {
-        const element = this.peek(mode);
-        if (!element) return null;
-        const index = this.items.findIndex(i => i.id === element.id);
+        const target = this.peek(mode);
+        if (!target) return null;
+        const index = this.items.findIndex(i => i.id === target.id);
         return this.items.splice(index, 1)[0].item;
     }
 }
