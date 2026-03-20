@@ -5,6 +5,9 @@ export class AbortError extends Error {
     }
 }
 export function mapAsyncCallback(array, fn, callback, signal) {
+    if (array.length === 0) {
+        return callback(null, []);
+    }
     let results = [];
     let completed = 0;
     let isDone = false;
@@ -13,7 +16,9 @@ export function mapAsyncCallback(array, fn, callback, signal) {
         isDone = true;
         timers.forEach(clearTimeout);
         timers.clear();
-        if (signal) signal.removeEventListener('abort', onAbort);
+        if (signal) {
+            signal.removeEventListener('abort', onAbort);
+        }
     };
     const onAbort = () => {
         cleanup();
@@ -29,6 +34,7 @@ export function mapAsyncCallback(array, fn, callback, signal) {
             if (isDone) return;
             fn(item, (err, result) => {
                 if (isDone) return;
+
                 if (err) {
                     cleanup();
                     return callback(err);
@@ -42,5 +48,25 @@ export function mapAsyncCallback(array, fn, callback, signal) {
             });
         }, 100);
         timers.add(timer);
+    });
+}
+export function mapAsyncPromise(array, fn, signal) {
+    return new Promise((resolve, reject) => {
+        mapAsyncCallback(
+            array,
+            (item, cb) => {
+                try {
+                    const res = fn(item);
+                    cb(null, res);
+                } catch (err) {
+                    cb(err);
+                }
+            },
+            (err, res) => {
+                if (err) reject(err);
+                else resolve(res);
+            },
+            signal
+        );
     });
 }
