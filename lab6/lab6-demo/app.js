@@ -7,7 +7,7 @@ async function runStreamDemo() {
         }
         console.log("Stream finished processing successfully.\n");
     } catch (err) {
-        console.error("❌ Unexpected error in Case 1:", err.message);
+        console.error("Unexpected error in case 1:", err.message);
     }
     console.log("Case 2 robust error propagation");
     try {
