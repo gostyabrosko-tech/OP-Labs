@@ -1,0 +1,8 @@
+{
+  "name": "lab8-demo",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@arthur/lab8-core": "file:../lab8-core"
+  }
+}
