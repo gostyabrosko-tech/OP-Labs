@@ -1,14 +1,24 @@
-export const withLogging = (fn) => {
+export const withLogging = (fn, config = {}) => {
+    const { 
+        level = 'INFO', 
+        logger = console 
+    } = config;
     return async (...args) => {
         const timestamp = new Date().toISOString();
         const functionName = fn.name || 'anonymous';
-        console.log(`[${timestamp}] [INFO] Calling: ${functionName} with args:`, args);
+        const start = performance.now();
         try {
+            if (level === 'INFO' || level === 'DEBUG') {
+                logger.log(`[${timestamp}] [${level}] CALL ${functionName} with:`, args);
+            }
             const result = await fn(...args);
-            console.log(`[${timestamp}] [INFO] ${functionName} returned:`, result);
+            if (level === 'DEBUG') {
+                const duration = (performance.now() - start).toFixed(3);
+                logger.log(`[${timestamp}] [DEBUG] Return ${functionName} (${duration}ms):`, result);
+            }
             return result;
         } catch (error) {
-            console.error(`[${timestamp}] [ERROR] ${functionName} failed:`, error.message);
+            logger.error(`[${timestamp}] [ERROR] Failed ${functionName}: ${error.message}`);
             throw error;
         }
     };
